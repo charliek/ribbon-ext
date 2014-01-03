@@ -1,0 +1,34 @@
+
+subprojects { project ->
+    apply plugin: 'maven-publish'
+
+    task install(dependsOn: publishToMavenLocal)
+
+    publishing {
+        publications {
+            artifact(MavenPublication) {
+                from components.java
+
+                artifact sourceJar {
+                    classifier 'sources'
+                }
+            }
+        }
+
+        if(! isSnapshot) {
+            repositories {
+                maven {
+                    name "bintray-charliek-maven-${project.group}:${project.name}"
+                    url "https://api.bintray.com/maven/charliek/maven/${project.group}:${project.name}"
+                    credentials {
+                        username bintray_username
+                        password bintray_api_key
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+

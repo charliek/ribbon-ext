@@ -1,0 +1,68 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    apply from: file('gradle/buildscript.gradle'), to: buildscript
+}
+
+allprojects {
+    repositories {
+    	mavenLocal()
+        mavenCentral()
+    }
+}
+
+apply from: file('gradle/versioning.gradle')
+apply from: file('gradle/convention.gradle')
+apply from: file('gradle/check.gradle')
+apply from: file('gradle/maven.gradle')
+
+allprojects {
+	group = 'com.charlieknudsen.ribbon-ext'	
+}
+
+subprojects {
+    dependencies {
+        // for now only use groovy for spock tests
+        testCompile 'org.codehaus.groovy:groovy-all:2.1.5'
+        testCompile 'org.slf4j:slf4j-log4j12:1.7.5'
+
+        // mandatory dependencies for using Spock
+        testCompile 'org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT'
+
+        // optional dependencies for using Spock
+  		testRuntime "cglib:cglib-nodep:2.2.2"        // allows mocking of classes (in addition to interfaces)
+  		testRuntime "org.objenesis:objenesis:1.2"    // allows mocking of classes without default constructor (together with CGLIB)
+
+        // common application dependencies
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
+        compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.2.3'
+    }   
+}
+
+project(':ribbon-retrofit') {
+    dependencies {
+        compile 'com.netflix.ribbon:ribbon-core:0.3.4'
+        compile 'com.netflix.rxjava:rxjava-core:0.15.0'
+
+        compile 'com.squareup.retrofit:retrofit:1.3.0'
+        compile 'com.squareup.retrofit:converter-jackson:1.3.0'
+        compile 'com.squareup.okhttp:okhttp:1.2.1'
+    }
+}
+
+project(':ribbon-etcd') {
+    dependencies {
+        compile 'com.netflix.ribbon:ribbon-core:0.3.4'
+        compile project(':etcd-client')
+    }
+}
+
+project(':etcd-client') {
+    dependencies {
+        compile 'com.squareup.retrofit:retrofit:1.3.0'
+        compile 'com.squareup.retrofit:converter-jackson:1.3.0'
+        compile 'com.squareup.okhttp:okhttp:1.2.1'
+    }
+}
