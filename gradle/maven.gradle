@@ -15,13 +15,15 @@ subprojects { project ->
             }
         }
 
-        repositories {
-            maven {
-                name "bintray"
-                url "https://api.bintray.com/maven/charliek/maven/${project.group}:${project.name}"
-                credentials {
-                    username bintray_username
-                    password bintray_api_key
+        if(! isSnapshot) {
+            repositories {
+                maven {
+                    name "bintray"
+                    url "https://api.bintray.com/maven/charliek/maven/${project.group}:${project.name}"
+                    credentials {
+                        username bintray_username
+                        password bintray_api_key
+                    }
                 }
             }
         }
