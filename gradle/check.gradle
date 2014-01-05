@@ -6,6 +6,7 @@ subprojects {
     apply plugin: 'findbugs'
     findbugs {
         toolVersion = "2.0.3"
+        excludeFilter = file("$rootProject.projectDir/gradle/findbugs/excludeFilter.xml")
     }
     tasks.withType(FindBugs) {
         reports.html.enabled true

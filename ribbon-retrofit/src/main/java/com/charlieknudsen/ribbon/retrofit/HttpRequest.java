@@ -23,8 +23,12 @@ public class HttpRequest extends ClientRequest {
                 switch (uri.getScheme()) {
                     case "http":
                         port = 80;
+                        break;
                     case "https":
                         port = 443;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unable to determine port of passed in url: " + url);
                 }
             }
             return new URI(uri.getScheme(), uri.getUserInfo(), null, port, uri.getPath(), uri.getQuery(), uri.getFragment());
