@@ -3,8 +3,10 @@ package com.charlieknudsen.ribbon.etcd
 import com.charlieknudsen.etcd.EtcdClient
 import com.charlieknudsen.etcd.transfer.Action
 import com.netflix.loadbalancer.Server
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore("Ignore until etcd integration test strategy is figured out")
 class EtcdPublisherTest extends Specification {
 
     def 'test basic publish'() {
