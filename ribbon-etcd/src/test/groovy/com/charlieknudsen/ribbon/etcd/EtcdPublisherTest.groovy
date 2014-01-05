@@ -6,12 +6,11 @@ import com.netflix.loadbalancer.Server
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore("Ignore until etcd integration test strategy is figured out")
 class EtcdPublisherTest extends Specification {
 
     def 'test basic publish'() {
         given:
-        EtcdClient client = new EtcdClient();
+        EtcdClient client = new EtcdClient()
         String appName = "helloworld"
         String expectedDir = "/app/" + appName + "/servers"
         String expectedKey = "test.example.com-80"

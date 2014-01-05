@@ -67,3 +67,47 @@ project(':etcd-client') {
         compile 'com.squareup.okhttp:okhttp:1.2.1'
     }
 }
+
+
+// Below is a hacky way to run the tests with a running etcd instance
+
+Process execCommandAndWaitForStatusString(String command, String readyStatusString) {
+    ProcessBuilder builder = new ProcessBuilder(command.split(' '))
+    builder.redirectErrorStream(true)
+    builder.directory(new File("."))
+    Process process = builder.start()
+
+    InputStream processStdout = process.getInputStream()
+    BufferedReader reader = new BufferedReader(new InputStreamReader(processStdout))
+
+    def line
+    while ((line = reader.readLine()) != null) {
+        println line
+        if (line.contains(readyStatusString)) {
+            println "'${command}' is ready"
+            break;
+        }
+    }
+
+    process.consumeProcessOutput(System.out, System.err)
+
+    return process
+}
+
+Process etcdProcess = null
+
+task startEtcd << {
+    String command = "etcd -data-dir test0 -name test0"
+    etcdProcess = execCommandAndWaitForStatusString(command, 'raft server')
+}
+
+task stopEtcd << {
+    etcdProcess.destroy()
+}
+
+// TODO figure out how to do this properly. Dependency order is not guaranteed but required here.
+task testWithEtcd(dependsOn: ['startEtcd', ':etcd-client:test', ':ribbon-retrofit:test', ':ribbon-etcd:test']) << {
+    // nothing to do here
+}
+
+testWithEtcd.finalizedBy stopEtcd
