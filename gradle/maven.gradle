@@ -10,25 +10,21 @@ subprojects { project ->
                 from components.java
 
                 artifact sourceJar {
-                    classifier 'sources'
+                    classifier "sources"
                 }
             }
         }
 
-        if(! isSnapshot) {
-            repositories {
-                maven {
-                    name "bintray-charliek-maven-${project.group}:${project.name}"
-                    url "https://api.bintray.com/maven/charliek/maven/${project.group}:${project.name}"
-                    credentials {
-                        username bintray_username
-                        password bintray_api_key
-                    }
+        repositories {
+            maven {
+                name "bintray"
+                url "https://api.bintray.com/maven/charliek/maven/${project.group}:${project.name}"
+                credentials {
+                    username bintray_username
+                    password bintray_api_key
                 }
             }
         }
     }
 
 }
-
-

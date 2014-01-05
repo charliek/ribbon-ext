@@ -35,13 +35,7 @@ subprojects { project ->
       from sourceSets.main.allSource
     }
 
-    task javadocJar(type: Jar) {
-      description "An archive of the JavaDocs for Maven Central"
-      classifier "javadoc"
-      from javadoc
-    }
-
     artifacts {
-      archives javadocJar, sourceJar
+      archives sourceJar
     }
 }
