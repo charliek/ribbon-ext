@@ -82,9 +82,7 @@ Process execCommandAndWaitForStatusString(String command, String readyStatusStri
 
     def line
     while ((line = reader.readLine()) != null) {
-        println line
         if (line.contains(readyStatusString)) {
-            println "'${command}' is ready"
             break;
         }
     }
@@ -94,20 +92,21 @@ Process execCommandAndWaitForStatusString(String command, String readyStatusStri
     return process
 }
 
+// Adding start etcd to the task list will run tests with etcd running in the background
 Process etcdProcess = null
 
-task startEtcd << {
+task withEtcd << {
     String command = "etcd -data-dir test0 -name test0"
     etcdProcess = execCommandAndWaitForStatusString(command, 'raft server')
 }
 
-task stopEtcd << {
+task stopEtcd  << {
     etcdProcess.destroy()
 }
 
-// TODO figure out how to do this properly. Dependency order is not guaranteed but required here.
-task testWithEtcd(dependsOn: ['startEtcd', ':etcd-client:test', ':ribbon-retrofit:test', ':ribbon-etcd:test']) << {
-    // nothing to do here
-}
+withEtcd.finalizedBy stopEtcd
 
-testWithEtcd.finalizedBy stopEtcd
+subprojects { project ->
+    project.tasks.test.mustRunAfter rootProject.tasks.withEtcd
+    rootProject.tasks.stopEtcd.mustRunAfter project.tasks.test
+}
